@@ -3,11 +3,11 @@ using Azure.Storage.Blobs;
 
 namespace AzureShowcase.Pages;
 
-public class PrivacyModel : PageModel
+public class DirectUploadModel : PageModel
 {
     private readonly IConfiguration _configuration;
     
-    public PrivacyModel(IConfiguration configuration)
+    public DirectUploadModel(IConfiguration configuration)
     {
         _configuration = configuration;
     }
