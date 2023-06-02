@@ -14,10 +14,14 @@ public class DirectUploadModel : PageModel
 
     public void OnGet()
     {
-        UploadFile();
     }
 
-    public async void UploadFile() {
+    public async Task OnPostAsync(IFormFile uploadedFile) {
+        await UploadFile(uploadedFile);
+    }
+
+    public async Task UploadFile(IFormFile uploadedFile) {
+
         // Fetch the Connection String from your configuration
         string connectionString = _configuration.GetConnectionString("AzureBlob");
 
@@ -27,16 +31,12 @@ public class DirectUploadModel : PageModel
         // Create the container and return a container client object
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firstblobcontainer");
 
-        // Create a local file in the ./data/ directory for uploading and downloading
-        string localPath = "./text_files/";
-        string fileName = "first_uploaded.txt";
-        string localFilePath = Path.Combine(localPath, fileName);
-
         // Get a reference to a blob
-        BlobClient blobClient = containerClient.GetBlobClient(fileName);
+        BlobClient blobClient = containerClient.GetBlobClient(uploadedFile.FileName);
 
+        using var stream = uploadedFile.OpenReadStream(); // File to read from.
         // Open the file and upload its data
-        await blobClient.UploadAsync(localFilePath, true);
+        await blobClient.UploadAsync(stream, true);
     }
 }
 
